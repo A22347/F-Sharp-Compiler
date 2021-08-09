@@ -8,8 +8,11 @@
 #ifndef typetable_h
 #define typetable_h
 
+#include <stdbool.h>
+
 void PsInitTypeTable(void);
-void PsAllocateType(char* identifier, char* type);
+void PsAllocateType(char* identifier, char* type, bool isMutable);
 char* PsGetIdentifierType(char* identifier);
+bool PsIsMutable(char* identifier);
 
 #endif /* typetable_h */

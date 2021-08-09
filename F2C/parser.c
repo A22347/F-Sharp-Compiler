@@ -576,6 +576,12 @@ PsResult PsExpression() {
         PsEatToken(TOKEN_LET);
         
         TkToken* identifier = PsCheckToken();
+        bool isMutable = false;
+        if (identifier->type == TOKEN_MUTABLE) {
+            isMutable = true;
+            PsEatToken(TOKEN_MUTABLE);
+            identifier = PsCheckToken();
+        }
         char* typename = "*";
         if (!PsEatToken(TOKEN_IDENTIFIER)) PsParseError("expected identifier");
         if (PsEatToken(TOKEN_COLON)) {
@@ -584,7 +590,7 @@ PsResult PsExpression() {
             typename = typen->lexeme;
         }
         
-        PsAllocateType(identifier->lexeme, typename);
+        PsAllocateType(identifier->lexeme, typename, isMutable);
         
         if (!PsEatToken(TOKEN_EQUALS)) PsParseError("expected assignment");
 
@@ -612,6 +618,10 @@ PsResult PsExpression() {
     next = PsCheckToken();
     if (next->type == TOKEN_ASSIGNMENT) {
         PsEatToken(TOKEN_ASSIGNMENT);
+        
+        if (PsGetIdentifierType(res.identifier) && !PsIsMutable(res.identifier)) {
+            PsParseError("cannot assign to non-mutable identifier");
+        }
         
         PsResult n = PsExpression();
         if (n.reg == -2) {

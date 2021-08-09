@@ -179,6 +179,7 @@ void TkFoundToken(char* token, int t)
     else if (!strcmp(token, "as")) type = TOKEN_AS;
     else if (!strcmp(token, "type")) type = TOKEN_TYPE;
     else if (!strcmp(token, "let")) type = TOKEN_LET;
+    else if (!strcmp(token, "mutable")) type = TOKEN_MUTABLE;
 
     else if (!strcmp(token, "char")) type = TOKEN_TYPE_NAME;
     else if (!strcmp(token, "short")) type = TOKEN_TYPE_NAME;

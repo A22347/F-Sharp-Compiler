@@ -16,6 +16,7 @@ typedef struct PsDeclaredType {
     char* identifier;
     char* type;
     struct PsDeclaredType* next;
+    bool isMutable;
     
 } PsDeclaredType;
 
@@ -30,7 +31,7 @@ void PsInitTypeTable() {
     typeHead->type = NULL;
 }
 
-void PsAllocateType(char* identifier, char* type) {
+void PsAllocateType(char* identifier, char* type, bool isMutable) {
     if (PsGetIdentifierType(identifier)) {
         char* x = malloc(strlen(identifier) + 60);
         sprintf(x, "redeclaration of identifier '%s'", identifier);
@@ -47,6 +48,7 @@ void PsAllocateType(char* identifier, char* type) {
     typeTail->next = malloc(sizeof(PsDeclaredType));
     typeTail = typeTail->next;
     typeTail->identifier = allocIdent;
+    typeTail->isMutable = isMutable;
     typeTail->next = NULL;
     typeTail->type = allocType;
 }
@@ -65,4 +67,20 @@ char* PsGetIdentifierType(char* identifier) {
     }
     
     return NULL;
+}
+
+bool PsIsMutable(char* identifier) {
+    PsDeclaredType* curr = typeHead;
+    
+    while (curr) {
+        if (curr->type != NULL && curr->identifier != NULL) {
+            if (!strcmp(curr->identifier, identifier)) {
+                return curr->isMutable;
+            }
+        }
+        
+        curr = curr->next;
+    }
+    
+    return false;
 }
