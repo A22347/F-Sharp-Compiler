@@ -47,6 +47,7 @@
 		C0656F0126C112A90029677E /* regreuse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = regreuse.c; sourceTree = "<group>"; };
 		C0656F0926C114790029677E /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		C0656F0A26C115760029677E /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		C0656F0B26C115DB0029677E /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +83,7 @@
 			children = (
 				C0656EF726C112A90029677E /* IN.TXT */,
 				C0656F0926C114790029677E /* LICENSE */,
+				C0656F0B26C115DB0029677E /* README.md */,
 				C0656F0026C112A90029677E /* OUT.TXT */,
 				C0656EF926C112A90029677E /* main.c */,
 				C0656EF826C112A90029677E /* codegen.c */,
