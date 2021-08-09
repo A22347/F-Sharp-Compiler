@@ -45,6 +45,7 @@
 		C0656EFF26C112A90029677E /* regreuse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = regreuse.h; sourceTree = "<group>"; };
 		C0656F0026C112A90029677E /* OUT.TXT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OUT.TXT; sourceTree = "<group>"; };
 		C0656F0126C112A90029677E /* regreuse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = regreuse.c; sourceTree = "<group>"; };
+		C0656F0926C114790029677E /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +79,7 @@
 			isa = PBXGroup;
 			children = (
 				C0656EF726C112A90029677E /* IN.TXT */,
+				C0656F0926C114790029677E /* LICENSE */,
 				C0656F0026C112A90029677E /* OUT.TXT */,
 				C0656EF926C112A90029677E /* main.c */,
 				C0656EF826C112A90029677E /* codegen.c */,
