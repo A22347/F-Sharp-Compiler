@@ -7,7 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C0656ED726C112750029677E /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = C0656ED626C112750029677E /* main.c */; };
+		C0656F0226C112A90029677E /* typetable.c in Sources */ = {isa = PBXBuildFile; fileRef = C0656EF326C112A90029677E /* typetable.c */; };
+		C0656F0326C112A90029677E /* peephole.c in Sources */ = {isa = PBXBuildFile; fileRef = C0656EF426C112A90029677E /* peephole.c */; };
+		C0656F0426C112A90029677E /* codegen.c in Sources */ = {isa = PBXBuildFile; fileRef = C0656EF826C112A90029677E /* codegen.c */; };
+		C0656F0526C112A90029677E /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = C0656EF926C112A90029677E /* main.c */; };
+		C0656F0626C112A90029677E /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = C0656EFA26C112A90029677E /* parser.c */; };
+		C0656F0726C112A90029677E /* tokeniser.c in Sources */ = {isa = PBXBuildFile; fileRef = C0656EFD26C112A90029677E /* tokeniser.c */; };
+		C0656F0826C112A90029677E /* regreuse.c in Sources */ = {isa = PBXBuildFile; fileRef = C0656F0126C112A90029677E /* regreuse.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +30,21 @@
 
 /* Begin PBXFileReference section */
 		C0656ED326C112750029677E /* F2C */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = F2C; sourceTree = BUILT_PRODUCTS_DIR; };
-		C0656ED626C112750029677E /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		C0656EF326C112A90029677E /* typetable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = typetable.c; sourceTree = "<group>"; };
+		C0656EF426C112A90029677E /* peephole.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = peephole.c; sourceTree = "<group>"; };
+		C0656EF526C112A90029677E /* codegen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = codegen.h; sourceTree = "<group>"; };
+		C0656EF626C112A90029677E /* parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parser.h; sourceTree = "<group>"; };
+		C0656EF726C112A90029677E /* IN.TXT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IN.TXT; sourceTree = "<group>"; };
+		C0656EF826C112A90029677E /* codegen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = codegen.c; sourceTree = "<group>"; };
+		C0656EF926C112A90029677E /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		C0656EFA26C112A90029677E /* parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = parser.c; sourceTree = "<group>"; };
+		C0656EFB26C112A90029677E /* typetable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = typetable.h; sourceTree = "<group>"; };
+		C0656EFC26C112A90029677E /* tokeniser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tokeniser.h; sourceTree = "<group>"; };
+		C0656EFD26C112A90029677E /* tokeniser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tokeniser.c; sourceTree = "<group>"; };
+		C0656EFE26C112A90029677E /* peephole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = peephole.h; sourceTree = "<group>"; };
+		C0656EFF26C112A90029677E /* regreuse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = regreuse.h; sourceTree = "<group>"; };
+		C0656F0026C112A90029677E /* OUT.TXT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OUT.TXT; sourceTree = "<group>"; };
+		C0656F0126C112A90029677E /* regreuse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = regreuse.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,7 +77,21 @@
 		C0656ED526C112750029677E /* F2C */ = {
 			isa = PBXGroup;
 			children = (
-				C0656ED626C112750029677E /* main.c */,
+				C0656EF726C112A90029677E /* IN.TXT */,
+				C0656F0026C112A90029677E /* OUT.TXT */,
+				C0656EF926C112A90029677E /* main.c */,
+				C0656EF826C112A90029677E /* codegen.c */,
+				C0656EF526C112A90029677E /* codegen.h */,
+				C0656EFA26C112A90029677E /* parser.c */,
+				C0656EF626C112A90029677E /* parser.h */,
+				C0656EF426C112A90029677E /* peephole.c */,
+				C0656EFE26C112A90029677E /* peephole.h */,
+				C0656F0126C112A90029677E /* regreuse.c */,
+				C0656EFF26C112A90029677E /* regreuse.h */,
+				C0656EFD26C112A90029677E /* tokeniser.c */,
+				C0656EFC26C112A90029677E /* tokeniser.h */,
+				C0656EF326C112A90029677E /* typetable.c */,
+				C0656EFB26C112A90029677E /* typetable.h */,
 			);
 			path = F2C;
 			sourceTree = "<group>";
@@ -119,7 +153,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C0656ED726C112750029677E /* main.c in Sources */,
+				C0656F0726C112A90029677E /* tokeniser.c in Sources */,
+				C0656F0526C112A90029677E /* main.c in Sources */,
+				C0656F0426C112A90029677E /* codegen.c in Sources */,
+				C0656F0226C112A90029677E /* typetable.c in Sources */,
+				C0656F0626C112A90029677E /* parser.c in Sources */,
+				C0656F0826C112A90029677E /* regreuse.c in Sources */,
+				C0656F0326C112A90029677E /* peephole.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
