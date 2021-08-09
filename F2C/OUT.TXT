@@ -5,3 +5,11 @@ mov [a], R0
 mul R0, 88
 add R0, 2
 mov [b], R0
+mov [variable], 123
+mov R0, 7011
+mov [variable], R0
+cmp R0, 444
+setg R0
+test R0, R0
+setz R0
+mov [test], R0
