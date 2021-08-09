@@ -1,0 +1,7 @@
+mov R0, 6
+mov [a], R0
+add R0, 9
+mov [a], R0
+mul R0, 88
+add R0, 2
+mov [b], R0
