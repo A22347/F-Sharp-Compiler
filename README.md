@@ -1,6 +1,6 @@
 ## F#/C Compiler
 
-A compiler for a custom language combining C and F#.
+A compiler for a custom language combining C, F# and some other things.
 
 
 Example:
