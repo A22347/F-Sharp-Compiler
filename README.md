@@ -1,4 +1,4 @@
-## F#/C Compiler
+## C/F# Compiler
 
 A compiler for a custom language combining C, F# and some other things.
 
