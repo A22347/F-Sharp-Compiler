@@ -46,6 +46,7 @@
 		C0656F0026C112A90029677E /* OUT.TXT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OUT.TXT; sourceTree = "<group>"; };
 		C0656F0126C112A90029677E /* regreuse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = regreuse.c; sourceTree = "<group>"; };
 		C0656F0926C114790029677E /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		C0656F0A26C115760029677E /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +63,7 @@
 		C0656ECA26C112750029677E = {
 			isa = PBXGroup;
 			children = (
+				C0656F0A26C115760029677E /* LICENSE */,
 				C0656ED526C112750029677E /* F2C */,
 				C0656ED426C112750029677E /* Products */,
 			);
