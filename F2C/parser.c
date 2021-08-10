@@ -46,27 +46,6 @@
  */
 
 
-int PsPromote(int a, int b) {
-    if (a == TYPE_DEFAULT) {
-        a ^= b;
-        b ^= a;
-        a ^= b;
-    }
-    if (b == TYPE_DEFAULT) {
-        if (a == TYPE_UINT32) return a;
-        else return TYPE_INT32;
-        
-    } else {
-        a = PsPromote(a, TYPE_DEFAULT);
-        b = PsPromote(b, TYPE_DEFAULT);
-        
-        if (!TYPE_ISSIGNED(a)) return a;
-        if (!TYPE_ISSIGNED(b)) return b;
-        
-        return TYPE_INT32;
-    }
-}
-
 TkToken* PsGetState() {
     return parseToken;
 }
@@ -173,7 +152,7 @@ PsResult PsCastExpression() {
         TkToken* typename = PsCheckToken();
         if (!PsEatToken(TOKEN_TYPE_NAME)) PsParseError("expected type name");
         if (!strcmp(typename->lexeme, "u8")) {
-            castExpr.type = TYPE_UINT8;
+            castExpr.type = "u8";
             if (castExpr.reg == -1) {
                 castExpr.literal = (uint8_t) castExpr.literal;
                 return castExpr;
@@ -589,9 +568,7 @@ PsResult PsExpression() {
             if (!PsEatToken(TOKEN_TYPE_NAME)) PsParseError("expected type name");
             typename = typen->lexeme;
         }
-        
-        PsAllocateType(identifier->lexeme, typename, isMutable);
-        
+                
         if (!PsEatToken(TOKEN_EQUALS)) PsParseError("expected assignment");
 
         PsResult n = PsIntegralExpression();
@@ -605,6 +582,15 @@ PsResult PsExpression() {
         } else {
             CgEmit("mov [%s], %r", identifier->lexeme, n);
         }
+        
+        if (!strcmp(typename, "*")) {
+            typename = n.type;
+            
+        } else if (strcmp(typename, n.type)) {
+            PsParseError("type mismatch on declaration");
+        }
+        
+        PsAllocateType(identifier->lexeme, typename, isMutable);
         
         return n;
     }
@@ -649,10 +635,10 @@ PsResult PsPrimaryExpression() {
     TkToken* tkn = PsCheckToken();
 
     if (PsEatToken(TOKEN_IDENTIFIER)) {
-        return (PsResult) {.seen = true, .identifier = tkn->lexeme, .reg = -2};
+        return (PsResult) {.seen = true, .identifier = tkn->lexeme, .type = PsGetIdentifierType(tkn->lexeme), .reg = -2};
         
     } else if (PsEatToken(TOKEN_INTEGER_LITERAL)) {
-        return (PsResult) {.seen = true, .literal = atoi(tkn->lexeme), .type = TYPE_INT32, .reg = -1};
+        return (PsResult) {.seen = true, .literal = atoi(tkn->lexeme), .type = "int", .reg = -1};
         
     } else if (PsEatToken(TOKEN_STRING_LITERAL)) {
         return (PsResult) {.seen = true, .reg=999};

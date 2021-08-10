@@ -13,20 +13,11 @@
 
 #include "tokeniser.h"
 
-#define TYPE_INT32      0
-#define TYPE_UINT32     1
-#define TYPE_INT16      2
-#define TYPE_UINT16     3
-#define TYPE_INT8       4
-#define TYPE_UINT8      5
-#define TYPE_DEFAULT    (-1)
-
-#define TYPE_ISSIGNED(x) (!(x & 1))
 
 typedef struct PsResult {
     char* identifier;
+    char* type;
     bool seen;
-    int type;
     int reg;
     int literal;
     

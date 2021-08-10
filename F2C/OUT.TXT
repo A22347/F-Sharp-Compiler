@@ -9,7 +9,8 @@ mov [variable], 123
 mov R0, 7011
 mov [variable], R0
 cmp R0, 444
-setg R0
-test R0, R0
-setz R0
+setle R0
 mov [test], R0
+mov R0, [a]
+add R0, 5
+mov [c], R0

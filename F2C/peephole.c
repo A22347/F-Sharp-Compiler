@@ -552,12 +552,47 @@ bool OpPeepImmAssignThenUse(char* line, FILE* in, FILE* out) {
 }
 
 /*
- MOV [IDENT], IMM
- MOV REG, [IDENT]
+ if (!OpPeepInvertedComparisions(linecopy, in, out)) {fseek(in, pos, SEEK_SET);} else {didPeephole=true;continue;}
+ 
+     /*
+      setg R0
+      test R0, R0
+      setz R0
+      */
 
- MOV REG, IMM
- MOV [IDENT], REG
- */
+bool OpPeepInvertedComparisions(char* line, FILE* in, FILE* out) {
+    char oper[16];
+    int n, regn1, regn2, regn3, regn4;
+    sscanf(line, "%s R%d\n%n", oper, &regn1, &n);
+    CHECK_LINE_MATCHES;
+    READ_NEXT_LINE;
+    sscanf(line, "test R%d, R%d\n%n", &regn2, &regn3, &n);
+    CHECK_LINE_MATCHES;
+    READ_NEXT_LINE;
+    sscanf(line, "setz R%d\n%n", &regn4, &n);
+    CHECK_LINE_MATCHES;
+    
+    if (regn1 != regn2 || regn1 != regn3 || regn1 != regn4) return false;
+    
+    if (!strcmp(oper, "setg")) {
+        fprintf(out, "setle R%d\n", regn1);
+        return true;
+    }
+    if (!strcmp(oper, "setl")) {
+        fprintf(out, "setge R%d\n", regn1);
+        return true;
+    }
+    if (!strcmp(oper, "setge")) {
+        fprintf(out, "setg R%d\n", regn1);
+        return true;
+    }
+    if (!strcmp(oper, "setle")) {
+        fprintf(out, "setl R%d\n", regn1);
+        return true;
+    }
+
+    return false;
+}
 
 bool OpPeepNotNegDecInc(char* line, FILE* in, FILE* out) {
     int n = 0;
@@ -654,7 +689,14 @@ int OpPerformPeephole(const char* infile, const char* outfile, bool firstTime) {
         if (!OpPeepSymmetricalArithWithMemoryPreloaded(linecopy, in, out)) {fseek(in, pos, SEEK_SET);} else {didPeephole=true;continue;}
         strcpy(linecopy, line);
         if (!OpPeepImmAssignThenUse(linecopy, in, out)) {fseek(in, pos, SEEK_SET);} else {didPeephole=true;continue;}
+        strcpy(linecopy, line);
+        if (!OpPeepInvertedComparisions(linecopy, in, out)) {fseek(in, pos, SEEK_SET);} else {didPeephole=true;continue;}
     
+        /*
+         setg R0
+         test R0, R0
+         setz R0
+         */
         
         fseek(in, pos, SEEK_SET);
         fprintf(out, "%s", line);

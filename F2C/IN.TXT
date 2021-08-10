@@ -6,3 +6,5 @@ let mutable variable: int = 123
 variable <- 123 * (2 + 55)
 
 let test: int = !(variable > 444)
+
+let c = a + 5
