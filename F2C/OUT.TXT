@@ -19,4 +19,12 @@ setg R0
 mov [test2], R0
 mov R0, [a]
 add R0, 5
-mov [c], R0
+xor R1, R1
+test R0, R0
+jne .l1
+mov R0, [b]
+test R0, R0
+jne .l1
+inc R1
+@ .l1:
+mov [c], R1

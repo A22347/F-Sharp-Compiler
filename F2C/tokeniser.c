@@ -159,6 +159,8 @@ void TkFoundToken(char* token, int t)
     else if (!strcmp(token, "*")) type = TOKEN_ASTERISK;
     else if (!strcmp(token, "/")) type = TOKEN_SLASH;
     else if (!strcmp(token, "%")) type = TOKEN_MODULO;
+    else if (!strcmp(token, "&&")) type = TOKEN_LOGICAL_AND;
+    else if (!strcmp(token, "||")) type = TOKEN_LOGICAL_OR;
     else if (!strcmp(token, "&")) type = TOKEN_AMPERSAND;
     else if (!strcmp(token, "(")) type = TOKEN_LEFT_PARENTHESIS;
     else if (!strcmp(token, ")")) type = TOKEN_RIGHT_PARENTHESIS;

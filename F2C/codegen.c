@@ -39,6 +39,11 @@ int CgAllocateRegister() {
     return -1;
 }
 
+void CgEmitLabel(int id) {
+    fprintf(CgOutFile, "@ .l%d:\n", id);
+    printf("@ .l%d:\n", id);
+}
+
 void CgEmit(const char* format, ...) {
     char instr[256];
     memset(instr, 0, 256);

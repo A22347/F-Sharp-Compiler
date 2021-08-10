@@ -46,6 +46,11 @@
  */
 
 
+int PsGenerateUniqueID() {
+    static int x = 1;
+    return x++;
+}
+
 TkToken* PsGetState() {
     return parseToken;
 }
@@ -545,8 +550,94 @@ PsResult PsInclusiveOrExpression() {
     return (PsResult) {.seen = true, .reg = res.reg, .identifier = res.identifier, .literal = res.literal, .type = res.type};
 }
 
+PsResult PsLogicalAndExpression() {
+    PsResult res = PsInclusiveOrExpression();
+    if (!res.seen) {
+        return (PsResult){.seen = false};
+    }
+        
+    TkToken* tkn;
+    
+    while ((void)(tkn = PsCheckToken()), tkn->type == TOKEN_LOGICAL_AND) {
+        PsResult old = res;
+        
+        PsAdvanceToken();
+        res = PsInclusiveOrExpression();
+        if (!res.seen) {
+            PsParseError("expected equality expression");
+        }
+        
+        int l = PsGenerateUniqueID();
+        
+        // let c = (a + 5) && b
+        int newregister = CgAllocateRegister();
+        CgEmit("xor R%d, R%d", newregister, newregister);
+        if (old.reg == -1) {
+            old.reg = CgAllocateRegister();
+            CgEmit("mov %r, %d", old, old.literal);
+        }
+        if (old.reg == -2) {
+            old.reg = CgAllocateRegister();
+            CgEmit("mov %r, [%s]", old, old.identifier);
+        }
+        CgEmit("test %r, %r", old, old);
+        CgEmit("jne .l%d", l);
+        if (res.reg == -1) {
+            res.reg = CgAllocateRegister();
+            CgEmit("mov %r, %d", res, res.literal);
+        }
+        if (res.reg == -2) {
+            res.reg = CgAllocateRegister();
+            CgEmit("mov %r, [%s]", res, res.identifier);
+        }
+        CgEmit("test %r, %r", res, res);
+        CgEmit("jne .l%d", l);
+        CgEmit("inc R%d", newregister);
+
+        CgEmitLabel(l);
+        
+        /*
+                 push    rbp
+                 mov     rbp, rsp
+                 mov     eax, 0
+                 call    a
+                 test    eax, eax
+                 je      .L6
+                 mov     eax, 0
+                 call    b
+                 test    eax, eax
+                 je      .L6
+                 mov     eax, 1
+                 jmp     .L8
+         .L6:
+                 mov     eax, 0
+         .L8:
+         */
+        
+        /*if (res.reg == -1 && old.reg == -1) {
+            res.literal = old.literal & res.literal;
+            continue;
+        }
+        if (old.reg == -1) {
+            old.reg = CgAllocateRegister();
+            CgEmit("mov %r, %d", old, old.literal);
+        }
+        if (old.reg == -2) {
+            old.reg = CgAllocateRegister();
+            CgEmit("mov %r, [%s]", old, old.identifier);
+        }
+        CgEmit("or %r, %r", old, res);
+
+        */
+        
+        res.reg = newregister;
+    }
+    
+    return (PsResult) {.seen = true, .reg = res.reg, .identifier = res.identifier, .literal = res.literal, .type = res.type};
+}
+
 PsResult PsIntegralExpression() {
-    return PsInclusiveOrExpression();
+    return PsLogicalAndExpression();
 }
 
 PsResult PsExpression() {

@@ -13,7 +13,6 @@
 
 #include "tokeniser.h"
 
-
 typedef struct PsResult {
     char* identifier;
     char* type;
