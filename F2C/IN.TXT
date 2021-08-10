@@ -11,4 +11,4 @@ let test2: int = !!(variable > 666)
 let c = (a + 5) || b
 
 let e = (a + 4) ? (b + 5) : (c + 6)
-let f = a ?? b
+let f = a ?? (b - 3)
