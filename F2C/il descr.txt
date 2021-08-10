@@ -1,0 +1,36 @@
+Intermediate Language Description:
+
+The intermediate langauge is a mythical machine containing an infinite number of registers (R0, R1, R2, ...).
+Each register is 32 bits wide.
+
+List of instructions and their x86 conversions
+
+MOV A, B    -> MOV A, B
+ADD A, B    -> ADD A, B
+SUB A, B    -> SUB A, B
+NOT A       -> NOT A
+NEG A       -> NEG A
+XOR A, B    -> XOR A, B
+AND A, B    -> AND A, B
+OR A, B     -> OR, A, B
+TEST A, B   -> TEST A, B
+CMP A, B    -> CMP A, B
+MUL A, B    -> MOV EAX, A
+               MOV EBX, B
+               PUSH EDX
+               IMUL EBX
+               POP EDX
+               MOV A, EAX           (some optimisations can be done, e.g. if EDX isn't used or if A === EAX)
+DIV A, B    -> CDQ
+               MOV EAX, A
+               IDIV B
+               MOV A, EAX
+MOD A, B    -> XOR EDX, EDX
+               MOV EAX, A
+               DIV B
+               MOV A, EDX
+SETG/SETGE/SETL/SETLE/SETZ/SETNZ A       -> SETxx A
+                                            MOVZX/MOVSX E?X, AL
+INC A       -> INC A
+DEC A       -> DEC A
+LEA A, [B]  -> LEA A, [B]

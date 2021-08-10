@@ -1,5 +1,7 @@
 mov R0, 6
 mov [a], R0
+test R0, R0
+setz R0
 add R0, 9
 mov [a], R0
 mul R0, 88
@@ -11,6 +13,10 @@ mov [variable], R0
 cmp R0, 444
 setle R0
 mov [test], R0
+mov R0, [variable]
+cmp R0, 666
+setg R0
+mov [test2], R0
 mov R0, [a]
 add R0, 5
 mov [c], R0

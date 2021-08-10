@@ -3,7 +3,7 @@
 //  F2C
 //
 //  Created by Alex Boxall on 1/8/21.
-//  Copyright © 2021 Alex Boxall. All rights reserved.
+//  Copyright © 2021 Alex Boxall.
 //
 
 #include <stdbool.h>
@@ -551,17 +551,9 @@ bool OpPeepImmAssignThenUse(char* line, FILE* in, FILE* out) {
     return true;
 }
 
-/*
- if (!OpPeepInvertedComparisions(linecopy, in, out)) {fseek(in, pos, SEEK_SET);} else {didPeephole=true;continue;}
- 
-     /*
-      setg R0
-      test R0, R0
-      setz R0
-      */
-
 bool OpPeepInvertedComparisions(char* line, FILE* in, FILE* out) {
     char oper[16];
+    char oper2[16];
     int n, regn1, regn2, regn3, regn4;
     sscanf(line, "%s R%d\n%n", oper, &regn1, &n);
     CHECK_LINE_MATCHES;
@@ -569,25 +561,30 @@ bool OpPeepInvertedComparisions(char* line, FILE* in, FILE* out) {
     sscanf(line, "test R%d, R%d\n%n", &regn2, &regn3, &n);
     CHECK_LINE_MATCHES;
     READ_NEXT_LINE;
-    sscanf(line, "setz R%d\n%n", &regn4, &n);
+    sscanf(line, "%s R%d\n%n", oper2, &regn4, &n);
     CHECK_LINE_MATCHES;
     
     if (regn1 != regn2 || regn1 != regn3 || regn1 != regn4) return false;
     
-    if (!strcmp(oper, "setg")) {
-        fprintf(out, "setle R%d\n", regn1);
-        return true;
-    }
-    if (!strcmp(oper, "setl")) {
-        fprintf(out, "setge R%d\n", regn1);
-        return true;
-    }
-    if (!strcmp(oper, "setge")) {
-        fprintf(out, "setg R%d\n", regn1);
-        return true;
-    }
-    if (!strcmp(oper, "setle")) {
-        fprintf(out, "setl R%d\n", regn1);
+    if (!strcmp(oper2, "setz")) {
+        if (!strcmp(oper, "setg")) {
+            fprintf(out, "setle R%d\n", regn1);
+            return true;
+        }
+        if (!strcmp(oper, "setl")) {
+            fprintf(out, "setge R%d\n", regn1);
+            return true;
+        }
+        if (!strcmp(oper, "setge")) {
+            fprintf(out, "setl R%d\n", regn1);
+            return true;
+        }
+        if (!strcmp(oper, "setle")) {
+            fprintf(out, "setg R%d\n", regn1);
+            return true;
+        }
+    } else if (!strcmp(oper2, "setnz")) {
+        fprintf(out, "%s R%d\n", oper, regn1);
         return true;
     }
 
@@ -691,13 +688,9 @@ int OpPerformPeephole(const char* infile, const char* outfile, bool firstTime) {
         if (!OpPeepImmAssignThenUse(linecopy, in, out)) {fseek(in, pos, SEEK_SET);} else {didPeephole=true;continue;}
         strcpy(linecopy, line);
         if (!OpPeepInvertedComparisions(linecopy, in, out)) {fseek(in, pos, SEEK_SET);} else {didPeephole=true;continue;}
-    
-        /*
-         setg R0
-         test R0, R0
-         setz R0
-         */
         
+        //TODO: combined multiplication/shift with addition/subtraction in LEA
+
         fseek(in, pos, SEEK_SET);
         fprintf(out, "%s", line);
     }

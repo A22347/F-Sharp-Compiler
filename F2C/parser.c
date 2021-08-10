@@ -3,7 +3,7 @@
 //  F2C
 //
 //  Created by Alex Boxall on 1/8/21.
-//  Copyright © 2021 Alex Boxall. All rights reserved.
+//  Copyright © 2021 Alex Boxall.
 //
 
 #include "parser.h"
