@@ -68,6 +68,7 @@ typedef enum TkTokenType {
     TOKEN_RIGHT_C_BRACKET,      // }@
     TOKEN_ELLIPSIS,             // ...
     TOKEN_RANGE,                // ..
+    TOKEN_DOUBLE_QUESTION,      // ??
     TOKEN_STRING_LITERAL,       //
     TOKEN_INTEGER_LITERAL,      //
     TOKEN_CHARACTER_LITERAL,    //

@@ -569,7 +569,6 @@ PsResult PsLogicalAndExpression() {
         
         int l = PsGenerateUniqueID();
         
-        // let c = (a + 5) && b
         int newregister = CgAllocateRegister();
         CgEmit("xor R%d, R%d", newregister, newregister);
         if (old.reg == -1) {
@@ -581,7 +580,7 @@ PsResult PsLogicalAndExpression() {
             CgEmit("mov %r, [%s]", old, old.identifier);
         }
         CgEmit("test %r, %r", old, old);
-        CgEmit("jne .l%d", l);
+        CgEmit("jz .l%d", l);
         if (res.reg == -1) {
             res.reg = CgAllocateRegister();
             CgEmit("mov %r, %d", res, res.literal);
@@ -591,33 +590,37 @@ PsResult PsLogicalAndExpression() {
             CgEmit("mov %r, [%s]", res, res.identifier);
         }
         CgEmit("test %r, %r", res, res);
-        CgEmit("jne .l%d", l);
+        CgEmit("jz .l%d", l);
         CgEmit("inc R%d", newregister);
 
         CgEmitLabel(l);
+        res.reg = newregister;
+    }
+    
+    return (PsResult) {.seen = true, .reg = res.reg, .identifier = res.identifier, .literal = res.literal, .type = res.type};
+}
+
+PsResult PsLogicalOrExpression() {
+    PsResult res = PsLogicalAndExpression();
+    if (!res.seen) {
+        return (PsResult){.seen = false};
+    }
         
-        /*
-                 push    rbp
-                 mov     rbp, rsp
-                 mov     eax, 0
-                 call    a
-                 test    eax, eax
-                 je      .L6
-                 mov     eax, 0
-                 call    b
-                 test    eax, eax
-                 je      .L6
-                 mov     eax, 1
-                 jmp     .L8
-         .L6:
-                 mov     eax, 0
-         .L8:
-         */
+    TkToken* tkn;
+    
+    while ((void)(tkn = PsCheckToken()), tkn->type == TOKEN_LOGICAL_OR) {
+        PsResult old = res;
         
-        /*if (res.reg == -1 && old.reg == -1) {
-            res.literal = old.literal & res.literal;
-            continue;
+        PsAdvanceToken();
+        res = PsLogicalAndExpression();
+        if (!res.seen) {
+            PsParseError("expected equality expression");
         }
+        
+        int l = PsGenerateUniqueID();
+        
+        int newregister = CgAllocateRegister();
+        CgEmit("mov R%d, 1", newregister);
         if (old.reg == -1) {
             old.reg = CgAllocateRegister();
             CgEmit("mov %r, %d", old, old.literal);
@@ -626,18 +629,90 @@ PsResult PsLogicalAndExpression() {
             old.reg = CgAllocateRegister();
             CgEmit("mov %r, [%s]", old, old.identifier);
         }
-        CgEmit("or %r, %r", old, res);
+        CgEmit("test %r, %r", old, old);
+        CgEmit("jnz .l%d", l);
+        if (res.reg == -1) {
+            res.reg = CgAllocateRegister();
+            CgEmit("mov %r, %d", res, res.literal);
+        }
+        if (res.reg == -2) {
+            res.reg = CgAllocateRegister();
+            CgEmit("mov %r, [%s]", res, res.identifier);
+        }
+        CgEmit("test %r, %r", res, res);
+        CgEmit("jnz .l%d", l);
+        CgEmit("xor R%d, R%d", newregister, newregister);
 
-        */
-        
+        CgEmitLabel(l);
         res.reg = newregister;
     }
     
     return (PsResult) {.seen = true, .reg = res.reg, .identifier = res.identifier, .literal = res.literal, .type = res.type};
 }
 
+PsResult PsTertiaryExpression() {
+    PsResult res = PsLogicalOrExpression();
+    if (!res.seen) {
+        return (PsResult){.seen = false};
+    }
+    
+    if (PsEatToken(TOKEN_DOUBLE_QUESTION)) {
+        int l1 = PsGenerateUniqueID();
+        
+        if (res.reg == -1) {
+            res.reg = CgAllocateRegister();
+            CgEmit("mov %r, %d", res, res.literal);
+        }
+        if (res.reg == -2) {
+            res.reg = CgAllocateRegister();
+            CgEmit("mov %r, [%s]", res, res.identifier);
+        }
+        CgEmit("test %r, %r", res, res);
+        CgEmit("jnz .l%d", l1);
+        
+        PsResult falsePart = PsTertiaryExpression();
+        CgEmit("mov %r, %r", res, falsePart);
+        CgEmitLabel(l1);
+        
+        return res;
+    }
+            
+    if (PsEatToken(TOKEN_QUESTION)) {
+        int l1 = PsGenerateUniqueID();
+        int l2 = PsGenerateUniqueID();
+        
+        if (res.reg == -1) {
+            res.reg = CgAllocateRegister();
+            CgEmit("mov %r, %d", res, res.literal);
+        }
+        if (res.reg == -2) {
+            res.reg = CgAllocateRegister();
+            CgEmit("mov %r, [%s]", res, res.identifier);
+        }
+        CgEmit("test %r, %r", res, res);
+        CgEmit("jz .l%d", l1);
+        
+        PsResult truePart = PsTertiaryExpression();
+        if (!PsEatToken(TOKEN_COLON)) PsParseError("expected colon");
+        
+        CgEmit("mov %r, %r", res, truePart);
+        
+        CgEmit("jmp .l%d", l2);
+        CgEmitLabel(l1);
+
+        PsResult falsePart = PsTertiaryExpression();
+        CgEmit("mov %r, %r", res, falsePart);
+
+        CgEmitLabel(l2);
+        
+        return (PsResult) {.seen = true, .reg = res.reg, .type = truePart.type};
+    }
+    
+    return (PsResult) {.seen = true, .reg = res.reg, .identifier = res.identifier, .literal = res.literal, .type = res.type};
+}
+
 PsResult PsIntegralExpression() {
-    return PsLogicalAndExpression();
+    return PsTertiaryExpression();
 }
 
 PsResult PsExpression() {

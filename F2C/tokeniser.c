@@ -108,6 +108,7 @@ char tokens[][16] = {
     "++",
     "--",
     "!=",
+    "??",
     "==",
     ">=",
     "<=",
@@ -159,6 +160,7 @@ void TkFoundToken(char* token, int t)
     else if (!strcmp(token, "*")) type = TOKEN_ASTERISK;
     else if (!strcmp(token, "/")) type = TOKEN_SLASH;
     else if (!strcmp(token, "%")) type = TOKEN_MODULO;
+    else if (!strcmp(token, "??")) type = TOKEN_DOUBLE_QUESTION;
     else if (!strcmp(token, "&&")) type = TOKEN_LOGICAL_AND;
     else if (!strcmp(token, "||")) type = TOKEN_LOGICAL_OR;
     else if (!strcmp(token, "&")) type = TOKEN_AMPERSAND;
@@ -175,6 +177,7 @@ void TkFoundToken(char* token, int t)
     else if (!strcmp(token, "==")) type = TOKEN_DOUBLE_EQUALS;
     else if (!strcmp(token, "!=")) type = TOKEN_NOT_EQUALS;
     else if (!strcmp(token, ":")) type = TOKEN_COLON;
+    else if (!strcmp(token, "?")) type = TOKEN_QUESTION;
     else if (!strcmp(token, "=")) type = TOKEN_EQUALS;
 
     else if (!strcmp(token, "cast")) type = TOKEN_CAST;

@@ -18,13 +18,32 @@ cmp R0, 666
 setg R0
 mov [test2], R0
 mov R0, [a]
-add R0, 5
-xor R1, R1
+add R0, 6
 test R0, R0
-jne .l1
+jnz .l1
 mov R0, [b]
 test R0, R0
-jne .l1
-inc R1
+jnz .l1
+xor R1, R1
 @ .l1:
 mov [c], R1
+mov R0, [a]
+add R0, 4
+test R0, R0
+jz .l2
+mov R1, [b]
+add R1, 5
+mov R0, R1
+jmp .l3
+@ .l2:
+mov R1, [c]
+add R1, 6
+mov R0, R1
+@ .l3:
+mov [e], R0
+mov R0, [a]
+test R0, R0
+jnz .l4
+mov R0, [b]
+@ .l4:
+mov [f], R0
