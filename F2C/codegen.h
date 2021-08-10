@@ -8,7 +8,7 @@
 
 #ifndef codegen_h
 #define codegen_h
-
+ 
 #define MAX_INTERNAL_REGS 100
 
 int CgAllocateRegister(void);

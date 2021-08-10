@@ -673,7 +673,7 @@ PsResult PsTertiaryExpression() {
         PsResult falsePart = PsTertiaryExpression();
         CgEmit("mov %r, %r", res, falsePart);
         CgEmitLabel(l1);
-        
+         
         return res;
     }
             
