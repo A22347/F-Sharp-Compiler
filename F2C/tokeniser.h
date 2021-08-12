@@ -64,6 +64,7 @@ typedef enum TkTokenType {
     TOKEN_RIGHT_SQUARE_BRACKET, // ]
     TOKEN_LEFT_CURLY_BRACKET,   // {
     TOKEN_RIGHT_CURLY_BRACKET,  // }
+    TOKEN_SEMICOLON,            // ;
     TOKEN_LEFT_C_BRACKET,       // @{
     TOKEN_RIGHT_C_BRACKET,      // }@
     TOKEN_ELLIPSIS,             // ...

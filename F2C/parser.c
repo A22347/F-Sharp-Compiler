@@ -693,19 +693,25 @@ PsResult PsTertiaryExpression() {
         CgEmit("jz .l%d", l1);
         
         PsResult truePart = PsTertiaryExpression();
+        if (truePart.reg == -1) {
+            truePart.reg = res.reg;
+            CgEmit("mov %r, %d", res, res.literal);
+        }
+        if (truePart.reg == -2) {
+            truePart.reg = res.reg;
+            CgEmit("mov %r, [%s]", res, res.identifier);
+        }
         if (!PsEatToken(TOKEN_COLON)) PsParseError("expected colon");
-        
-        CgEmit("mov %r, %r", res, truePart);
-        
+                
         CgEmit("jmp .l%d", l2);
         CgEmitLabel(l1);
 
         PsResult falsePart = PsTertiaryExpression();
-        CgEmit("mov %r, %r", res, falsePart);
+        CgEmit("mov %r, %r", truePart, falsePart);
 
         CgEmitLabel(l2);
         
-        return (PsResult) {.seen = true, .reg = res.reg, .type = truePart.type};
+        return truePart;
     }
     
     return (PsResult) {.seen = true, .reg = res.reg, .identifier = res.identifier, .literal = res.literal, .type = res.type};
@@ -737,7 +743,7 @@ PsResult PsExpression() {
                 
         if (!PsEatToken(TOKEN_EQUALS)) PsParseError("expected assignment");
 
-        PsResult n = PsIntegralExpression();
+        PsResult n = PsExpressionGroup();
         if (n.reg == -2) {
             PsResult ncopy = n;
             ncopy.reg = CgAllocateRegister();
@@ -775,7 +781,7 @@ PsResult PsExpression() {
             PsParseError("cannot assign to non-mutable identifier");
         }
         
-        PsResult n = PsExpression();
+        PsResult n = PsExpressionGroup();
         if (n.reg == -2) {
             PsResult ncopy = n;
             ncopy.reg = CgAllocateRegister();
@@ -792,6 +798,28 @@ PsResult PsExpression() {
     
     return res;
 }
+
+PsResult PsExpressionGroup() {
+    if (PsEatToken(TOKEN_LEFT_CURLY_BRACKET)) {
+        PsResult expr;
+        do {
+            expr = PsExpressionGroup();
+            bool semicolon = PsEatToken(TOKEN_SEMICOLON);
+            if (!semicolon) {
+                bool end = PsEatToken(TOKEN_RIGHT_CURLY_BRACKET);
+                if (end) {
+                    break;
+                } else {
+                    PsParseError("expected '}'");
+                }
+            }
+            
+        } while (!PsEatToken(TOKEN_RIGHT_CURLY_BRACKET));
+        return expr;
+    }
+    return PsExpression();
+}
+
 
 PsResult PsPrimaryExpression() {
     // <primary-expression>        ::= <identifier>

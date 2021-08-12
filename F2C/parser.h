@@ -37,5 +37,6 @@ PsResult PsAdditiveExpression(void);
 PsResult PsMultiplicativeExpression(void);
 PsResult PsCastExpression(void);
 PsResult PsPrimaryExpression(void);
+PsResult PsExpressionGroup(void);
 
 #endif /* parser_h */

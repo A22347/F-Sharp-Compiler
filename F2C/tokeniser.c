@@ -179,6 +179,9 @@ void TkFoundToken(char* token, int t)
     else if (!strcmp(token, ":")) type = TOKEN_COLON;
     else if (!strcmp(token, "?")) type = TOKEN_QUESTION;
     else if (!strcmp(token, "=")) type = TOKEN_EQUALS;
+    else if (!strcmp(token, "{")) type = TOKEN_LEFT_CURLY_BRACKET;
+    else if (!strcmp(token, "}")) type = TOKEN_RIGHT_CURLY_BRACKET;
+    else if (!strcmp(token, ";")) type = TOKEN_SEMICOLON;
 
     else if (!strcmp(token, "cast")) type = TOKEN_CAST;
     else if (!strcmp(token, "as")) type = TOKEN_AS;

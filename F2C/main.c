@@ -40,7 +40,7 @@ int main(int argc, char **argv)
     PsEatToken(TOKEN_NULL);
         
     while (PsCheckToken()->type != TOKEN_EOF) {
-        PsExpression();
+        PsExpressionGroup();
         printf("---------------\n");
     }
     printf("\n");

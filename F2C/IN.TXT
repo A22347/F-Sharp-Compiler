@@ -12,3 +12,10 @@ let c = (a + 5) || b
 
 let e = (a + 4) ? (b + 5) : (c + 6)
 let f = a ?? (b - 3)
+
+let g = a ? 1 :
+        b ? 2 :
+        c ? 3 : 4
+
+
+let h = {a <- 5; variable <- 6}
