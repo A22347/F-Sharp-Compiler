@@ -18,4 +18,12 @@ let g = a ? 1 :
         c ? 3 : 4
 
 
-let h = {a <- 5; variable <- 6}
+let h = {
+    a <- 5
+    variable <- 6
+}
+
+let x = while variable > 4 do {
+    a <- a + 55
+    variable <- variable - 1
+}

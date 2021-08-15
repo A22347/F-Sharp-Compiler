@@ -723,6 +723,25 @@ PsResult PsIntegralExpression() {
 
 PsResult PsExpression() {
     TkToken* next = PsCheckToken();
+    
+    if (next->type == TOKEN_WHILE) {
+        PsEatToken(TOKEN_WHILE);
+
+        int l1 = PsGenerateUniqueID();
+        int l2 = PsGenerateUniqueID();
+        
+        CgEmitLabel(l1);
+        PsResult condition = PsExpressionGroup();
+        CgEmit("test %r, %r", condition, condition);
+        CgEmit("jz .l%d", l2);
+        if (!PsEatToken(TOKEN_DO)) PsParseError("expected 'do'");
+        PsResult action = PsExpressionGroup();
+        CgEmit("jmp .l%d", l1);
+        CgEmitLabel(l2);
+        
+        return action;
+    }
+    
     if (next->type == TOKEN_LET) {
         PsEatToken(TOKEN_LET);
         
@@ -766,6 +785,8 @@ PsResult PsExpression() {
         
         return n;
     }
+    
+    
         
     PsResult res = PsIntegralExpression();
     if (!res.seen) {
@@ -804,15 +825,6 @@ PsResult PsExpressionGroup() {
         PsResult expr;
         do {
             expr = PsExpressionGroup();
-            bool semicolon = PsEatToken(TOKEN_SEMICOLON);
-            if (!semicolon) {
-                bool end = PsEatToken(TOKEN_RIGHT_CURLY_BRACKET);
-                if (end) {
-                    break;
-                } else {
-                    PsParseError("expected '}'");
-                }
-            }
             
         } while (!PsEatToken(TOKEN_RIGHT_CURLY_BRACKET));
         return expr;

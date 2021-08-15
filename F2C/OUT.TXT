@@ -76,3 +76,18 @@ mov [g], R0
 mov [a], 5
 mov [variable], 6
 mov [h], 6
+@ .l11:
+mov R0, [variable]
+cmp R0, 4
+setg R0
+test R0, R0
+jz .l12
+mov R0, [a]
+add R0, 55
+mov [a], R0
+mov R0, [variable]
+dec R0
+mov [variable], R0
+jmp .l11
+@ .l12:
+mov [x], R0
