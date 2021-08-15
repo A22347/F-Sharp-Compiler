@@ -29,6 +29,7 @@ MOD A, B    -> XOR EDX, EDX
                MOV EAX, A
                DIV B
                MOV A, EDX
+JZ/JNZ/JG/JNG/JL/JLE A                   -> Jxx A
 SETG/SETGE/SETL/SETLE/SETZ/SETNZ A       -> SETxx A
                                             MOVZX/MOVSX E?X, AL
 INC A       -> INC A

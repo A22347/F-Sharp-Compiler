@@ -824,8 +824,10 @@ PsResult PsExpressionGroup() {
     if (PsEatToken(TOKEN_LEFT_CURLY_BRACKET)) {
         PsResult expr;
         do {
+            PsEatToken(TOKEN_SEMICOLON);        //optional semicolons
             expr = PsExpressionGroup();
-            
+            PsEatToken(TOKEN_SEMICOLON);        //optional semicolons
+
         } while (!PsEatToken(TOKEN_RIGHT_CURLY_BRACKET));
         return expr;
     }

@@ -628,6 +628,52 @@ bool OpPeepNotNegDecInc(char* line, FILE* in, FILE* out) {
     return false;
 }
 
+bool OpCompareThenJump(char* line, FILE* in, FILE* out) {
+    int n = 0;
+    int regn, regn2, regn3, labl;
+    char oper[16];
+    char oper2[16];
+
+    sscanf(line, "%s R%d\n%n", oper, &regn, &n);
+    CHECK_LINE_MATCHES;
+    READ_NEXT_LINE;
+    sscanf(line, "test R%d, R%d\n%n", &regn2, &regn3, &n);
+    CHECK_LINE_MATCHES;
+    READ_NEXT_LINE;
+    sscanf(line, "%s .l%d\n%n", oper2, &labl, &n);
+    CHECK_LINE_MATCHES;
+    
+    if (regn != regn2 || regn != regn3) return false;
+    
+    if (!strcmp(oper, "setg") && !strcmp(oper2, "jz")) {
+        fprintf(out, "%s R%d\njng .l%d\n", oper, regn, labl);
+        return true;
+    }
+    if (!strcmp(oper, "setge") && !strcmp(oper2, "jz")) {
+        fprintf(out, "%s R%d\njl .l%d\n", oper, regn, labl);
+        return true;
+    }
+    if (!strcmp(oper, "setl") && !strcmp(oper2, "jz")) {
+        fprintf(out, "%s R%d\njnl .l%d\n", oper, regn, labl);
+        return true;
+    }
+    if (!strcmp(oper, "setle") && !strcmp(oper2, "jz")) {
+        fprintf(out, "%s R%d\njg .l%d\n", oper, regn, labl);
+    return true;
+    }
+    
+    return false;
+}
+
+/*
+ setg R0
+ test R0, R0
+ jz .l12
+ 
+ setg R0
+ jng .l12
+ */
+
 int OpPerformPeephole(const char* infile, const char* outfile, bool firstTime) {
     FILE* in = fopen(infile, "r");
     FILE* out = fopen(outfile, "w");
@@ -688,6 +734,8 @@ int OpPerformPeephole(const char* infile, const char* outfile, bool firstTime) {
         if (!OpPeepImmAssignThenUse(linecopy, in, out)) {fseek(in, pos, SEEK_SET);} else {didPeephole=true;continue;}
         strcpy(linecopy, line);
         if (!OpPeepInvertedComparisions(linecopy, in, out)) {fseek(in, pos, SEEK_SET);} else {didPeephole=true;continue;}
+        strcpy(linecopy, line);
+        if (!OpCompareThenJump(linecopy, in, out)) {fseek(in, pos, SEEK_SET);} else {didPeephole=true;continue;}
         
         //TODO: combined multiplication/shift with addition/subtraction in LEA
 
