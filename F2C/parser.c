@@ -724,6 +724,59 @@ PsResult PsIntegralExpression() {
 PsResult PsExpression() {
     TkToken* next = PsCheckToken();
     
+    if (next->type == TOKEN_FOR) {
+        //FOR identifier = start TO expression DO ...
+        //FOR identifier = start DOWNTO expression DO ...
+        PsEatToken(TOKEN_FOR);
+        
+        TkToken* identifier = PsCheckToken();
+        if (!PsEatToken(TOKEN_IDENTIFIER)) PsParseError("expected identifier");
+        
+        PsAllocateType(identifier->lexeme, "int", false);
+        
+        if (!PsEatToken(TOKEN_EQUALS)) PsParseError("expected '='");
+
+        PsResult res = PsExpressionGroup();
+        if (res.reg == -1) {
+            res.reg = CgAllocateRegister();
+            CgEmit("mov %r, %d", res, res.literal);
+        }
+        if (res.reg == -2) {
+            res.reg = CgAllocateRegister();
+            CgEmit("mov %r, [%s]", res, res.identifier);
+        }
+
+        int l1 = PsGenerateUniqueID();
+        int l2 = PsGenerateUniqueID();
+        CgEmitLabel(l1);
+                
+        bool downTo = false;
+        if (PsEatToken(TOKEN_TO)) downTo = false;
+        else if (PsEatToken(TOKEN_DOWNTO)) downTo = true;
+        else PsParseError("expected 'to'");
+
+        PsResult limit = PsExpressionGroup();
+        
+        if (limit.reg == -1) {
+            CgEmit("cmp %r, %d", res, limit.literal);
+        } else {
+            if (res.reg == -2) {
+                limit.reg = CgAllocateRegister();
+                CgEmit("mov %r, [%s]", limit, limit.identifier);
+            }
+            CgEmit("cmp %r, %r", res, limit);
+        }
+        
+        CgEmit(downTo ? "jl .l%d" : "jg .l%d", l2);
+        if (!PsEatToken(TOKEN_DO)) PsParseError("expected 'do'");
+        PsResult action = PsExpressionGroup();
+        CgEmit(downTo ? "dec %r" : "inc %r", res);
+        CgEmit("jmp .l%d", l1);
+        CgEmitLabel(l2);
+        
+        return action;
+
+    }
     if (next->type == TOKEN_WHILE) {
         PsEatToken(TOKEN_WHILE);
 

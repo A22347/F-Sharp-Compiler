@@ -20,5 +20,14 @@ let c = (a + 5) || b
 let e = (a + 4) ? (b + 5) : (c + 6)
 let f = a ?? b
 
+while variable > 50 do {
+    variable <- variable + 5
+    a <- a - 1
+}
+
+let mutable total = 0
+for i = 1223 downto 456 do {
+    total <- total + i
+}
 
 ```

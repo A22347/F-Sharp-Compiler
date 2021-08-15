@@ -1,16 +1,72 @@
-mov [a], 0
-mov [variable], 5
-@ .l1:
-mov R0, [variable]
-cmp R0, 4
-setg R0
-jng .l2
-mov R0, [a]
-add R0, 55
+mov R0, 6
 mov [a], R0
-mov R0, [variable]
-dec R0
+test R0, R0
+setz R0
+add R0, 9
+mov [a], R0
+mul R0, 88
+add R0, 2
+mov [b], R0
+mov [variable], 123
+mov R0, 7011
 mov [variable], R0
-jmp .l1
+cmp R0, 444
+setle R0
+mov [test], R0
+mov R0, [variable]
+cmp R0, 666
+setg R0
+mov [test2], R0
+mov R0, [a]
+add R0, 6
+test R0, R0
+jnz .l1
+mov R0, [b]
+test R0, R0
+jnz .l1
+xor R1, R1
+@ .l1:
+mov [c], R1
+mov R0, [a]
+add R0, 4
+test R0, R0
+jz .l2
+mov R0, [b]
+add R0, 5
+jmp .l3
 @ .l2:
-mov [x], R0
+mov R1, [c]
+add R1, 6
+mov R0, R1
+@ .l3:
+mov [e], R0
+mov R0, [a]
+test R0, R0
+jnz .l4
+mov R0, [b]
+@ .l4:
+mov [f], R0
+@ .l5:
+mov R0, [variable]
+cmp R0, 50
+setg R0
+jng .l6
+mov R0, [variable]
+add R0, 5
+mov [variable], R0
+mov R0, [a]
+dec R0
+mov [a], R0
+jmp .l5
+@ .l6:
+mov [total], 0
+mov R0, 1223
+@ .l7:
+cmp R0, 456
+jl .l8
+mov R1, [i]
+add R1, [total]
+mov [total], R1
+dec R0
+jmp .l7
+@ .l8:

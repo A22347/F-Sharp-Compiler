@@ -19,6 +19,9 @@ typedef enum TkTokenType {
     TOKEN_LET,                  // let
     TOKEN_WHILE,                // while
     TOKEN_DO,                   // do
+    TOKEN_TO,                   // to
+    TOKEN_FOR,                  // for
+    TOKEN_DOWNTO,               // downto
     TOKEN_REC,                  // rec
     TOKEN_PUBLIC,               // public
     TOKEN_MUTABLE,              // mutable
