@@ -184,6 +184,7 @@ void TkFoundToken(char* token, int t)
     else if (!strcmp(token, ";")) type = TOKEN_SEMICOLON;
 
     else if (!strcmp(token, "for")) type = TOKEN_FOR;
+    else if (!strcmp(token, "assert")) type = TOKEN_ASSERT;
     else if (!strcmp(token, "to")) type = TOKEN_TO;
     else if (!strcmp(token, "downto")) type = TOKEN_DOWNTO;
     else if (!strcmp(token, "cast")) type = TOKEN_CAST;

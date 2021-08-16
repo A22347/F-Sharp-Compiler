@@ -18,13 +18,39 @@ typedef struct PsDeclaredType {
     char* type;
     struct PsDeclaredType* next;
     bool isMutable;
+    int scope;
     
 } PsDeclaredType;
 
 PsDeclaredType* typeHead = 0;
 PsDeclaredType* typeTail = 0;
 
+int PsScopeLevel = 0;
+void PsIncreaseScope() {
+    PsScopeLevel++;
+}
+
+void PsDecreaseScope() {
+    PsDeclaredType* curr = typeHead;
+
+    while (curr) {
+        if (curr->type != NULL && curr->identifier != NULL) {
+            if (curr->scope >= PsScopeLevel) {
+                curr->type = NULL;
+                curr->identifier = NULL;
+                //TODO: free strings?
+                //TODO: actually delete from linked list
+            }
+        }
+        
+        curr = curr->next;
+    }
+    
+    PsScopeLevel--;
+}
+
 void PsInitTypeTable() {
+    PsScopeLevel = 0;
     typeHead = malloc(sizeof(PsDeclaredType));
     typeTail = typeHead;
     
@@ -33,9 +59,14 @@ void PsInitTypeTable() {
 }
 
 void PsAllocateType(char* identifier, char* type, bool isMutable) {
-    if (PsGetIdentifierType(identifier)) {
+    int scope = PsGetIdentifierScope(identifier);
+    if (scope != -1) {
         char* x = malloc(strlen(identifier) + 60);
-        sprintf(x, "redeclaration of identifier '%s'", identifier);
+        if (PsScopeLevel > scope) {
+            sprintf(x, "declaration of identifier '%s' shadows identifier in broader scope", identifier);
+        } else {
+            sprintf(x, "redeclaration of identifier '%s'", identifier);
+        }
         PsParseError(x);
         return;
     }
@@ -49,9 +80,26 @@ void PsAllocateType(char* identifier, char* type, bool isMutable) {
     typeTail->next = malloc(sizeof(PsDeclaredType));
     typeTail = typeTail->next;
     typeTail->identifier = allocIdent;
+    typeTail->scope = PsScopeLevel;
     typeTail->isMutable = isMutable;
     typeTail->next = NULL;
     typeTail->type = allocType;
+}
+
+int PsGetIdentifierScope(char* identifier) {
+    PsDeclaredType* curr = typeHead;
+    
+    while (curr) {
+        if (curr->type != NULL && curr->identifier != NULL) {
+            if (!strcmp(curr->identifier, identifier)) {
+                return curr->scope;
+            }
+        }
+        
+        curr = curr->next;
+    }
+    
+    return -1;
 }
 
 char* PsGetIdentifierType(char* identifier) {

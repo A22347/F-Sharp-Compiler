@@ -363,7 +363,7 @@ PsResult PsEqualityExpression() {
         if (!res.seen) {
             PsParseError("expected shift expression");
         }
-        
+
         if (old.reg == -1) {
             old.reg = CgAllocateRegister();
             CgEmit("mov %r, %d", old, old.literal);
@@ -406,6 +406,7 @@ PsResult PsRelationalExpression() {
 
         PsAdvanceToken();
         res = PsShiftExpression();
+        
         if (!res.seen) {
             PsParseError("expected shift expression");
         }
@@ -730,10 +731,11 @@ PsResult PsExpression() {
         PsEatToken(TOKEN_FOR);
         
         TkToken* identifier = PsCheckToken();
+
         if (!PsEatToken(TOKEN_IDENTIFIER)) PsParseError("expected identifier");
         
         PsAllocateType(identifier->lexeme, "int", false);
-        
+
         if (!PsEatToken(TOKEN_EQUALS)) PsParseError("expected '='");
 
         PsResult res = PsExpressionGroup();
@@ -795,6 +797,31 @@ PsResult PsExpression() {
         return action;
     }
     
+    if (next->type == TOKEN_ASSERT) {
+        PsEatToken(TOKEN_ASSERT);
+
+        int l1 = PsGenerateUniqueID();
+        int l2 = PsGenerateUniqueID();
+        CgEmitLabel(l2);
+
+        PsResult res = PsExpressionGroup();
+        if (res.reg == -1) {
+            res.reg = CgAllocateRegister();
+            CgEmit("mov %r, %d", res, res.literal);
+        }
+        if (res.reg == -2) {
+            res.reg = CgAllocateRegister();
+            CgEmit("mov %r, [%s]", res, res.identifier);
+        }
+        CgEmit("test %r, %r", res, res);
+        CgEmit("jnz .l%d", l1);
+        CgEmit("push .l%d", l2);
+        CgEmit("jmp __fs_runtime__assert_fail");
+        CgEmitLabel(l1);
+        
+        return res;
+    }
+    
     if (next->type == TOKEN_LET) {
         PsEatToken(TOKEN_LET);
         
@@ -835,7 +862,7 @@ PsResult PsExpression() {
         }
         
         PsAllocateType(identifier->lexeme, typename, isMutable);
-        
+
         return n;
     }
     
@@ -875,6 +902,7 @@ PsResult PsExpression() {
 
 PsResult PsExpressionGroup() {
     if (PsEatToken(TOKEN_LEFT_CURLY_BRACKET)) {
+        PsIncreaseScope();
         PsResult expr;
         do {
             PsEatToken(TOKEN_SEMICOLON);        //optional semicolons
@@ -882,6 +910,7 @@ PsResult PsExpressionGroup() {
             PsEatToken(TOKEN_SEMICOLON);        //optional semicolons
 
         } while (!PsEatToken(TOKEN_RIGHT_CURLY_BRACKET));
+        PsDecreaseScope();
         return expr;
     }
     return PsExpression();

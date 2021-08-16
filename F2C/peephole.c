@@ -628,6 +628,25 @@ bool OpPeepNotNegDecInc(char* line, FILE* in, FILE* out) {
     return false;
 }
 
+bool OpMoveOverwritesMove(char* line, FILE* in, FILE* out) {
+    int n = 0;
+    char ident[256];
+    char ident2[256];
+    int int1, int2;
+    
+    sscanf(line, "mov %s %d\n%n", ident, &int1, &n);
+    CHECK_LINE_MATCHES;
+    READ_NEXT_LINE;
+    sscanf(line, "mov %s %d\n%n", ident2, &int2, &n);
+    CHECK_LINE_MATCHES;
+    
+    if (!strcmp(ident, ident2) && ident[strlen(ident)-1] == ',') {
+        fprintf(out, "mov %s %d\n", ident2, int2);
+        return true;
+    }
+    return false;
+}
+
 bool OpCompareThenJump(char* line, FILE* in, FILE* out) {
     int n = 0;
     int regn, regn2, regn3, labl;
@@ -664,15 +683,6 @@ bool OpCompareThenJump(char* line, FILE* in, FILE* out) {
     
     return false;
 }
-
-/*
- setg R0
- test R0, R0
- jz .l12
- 
- setg R0
- jng .l12
- */
 
 int OpPerformPeephole(const char* infile, const char* outfile, bool firstTime) {
     FILE* in = fopen(infile, "r");
@@ -736,6 +746,8 @@ int OpPerformPeephole(const char* infile, const char* outfile, bool firstTime) {
         if (!OpPeepInvertedComparisions(linecopy, in, out)) {fseek(in, pos, SEEK_SET);} else {didPeephole=true;continue;}
         strcpy(linecopy, line);
         if (!OpCompareThenJump(linecopy, in, out)) {fseek(in, pos, SEEK_SET);} else {didPeephole=true;continue;}
+        strcpy(linecopy, line);
+        if (!OpMoveOverwritesMove(linecopy, in, out)) {fseek(in, pos, SEEK_SET);} else {didPeephole=true;continue;}
         
         //TODO: combined multiplication/shift with addition/subtraction in LEA
 

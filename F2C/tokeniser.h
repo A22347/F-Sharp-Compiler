@@ -22,6 +22,7 @@ typedef enum TkTokenType {
     TOKEN_TO,                   // to
     TOKEN_FOR,                  // for
     TOKEN_DOWNTO,               // downto
+    TOKEN_ASSERT,               // assert
     TOKEN_REC,                  // rec
     TOKEN_PUBLIC,               // public
     TOKEN_MUTABLE,              // mutable
